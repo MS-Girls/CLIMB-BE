@@ -1,0 +1,41 @@
+# Build artifacts
+bin/
+obj/
+
+# User-specific files
+*.user
+*.vspscc
+*.suo
+*.vssscc
+.vscode/
+.vs/
+
+# Logs and crash dumps
+*.log
+*.tlog
+*.dmp
+
+# NuGet Packages
+*.nupkg
+.nuget/
+
+# .NET Core & ASP.NET Artifacts
+project.lock.json
+project.assets.json
+Dependencies/
+appsettings.Development.json
+
+# Rider & JetBrains IDE
+.idea/
+*.sln.iml
+
+# MacOS & Linux
+.DS_Store
+*.swp
+
+# Environment Variables & Secrets
+.env
+secrets.json
+
+# Docker & CI/CD
+docker-compose.override.yml

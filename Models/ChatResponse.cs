@@ -1,8 +1,11 @@
+using System.Text.Json.Serialization;
+
 namespace CLIMB_BE.Models
 {
     public class ChatResponse
     {
-        public required string response { get; set; }
+        [JsonPropertyName("Response")] // Ensures correct serialization
+    public string? Response { get; set; }
        
     }
 

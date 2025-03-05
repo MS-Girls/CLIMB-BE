@@ -4,6 +4,6 @@ namespace CLIMB_BE.Services
 {
     public interface IChatServices
     {
-        ChatResponse GetResponse(ChatRequest request);
+        Task<ChatResponse> GetResponse(ChatRequest request);
     }
 }

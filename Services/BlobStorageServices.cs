@@ -1,5 +1,4 @@
 using Azure.Storage.Blobs;
-using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -19,20 +18,6 @@ namespace CLIMB_BE.Services
             _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
             _problemsContainerName = problemsContainerName ?? throw new ArgumentNullException(nameof(problemsContainerName));
             _resumesContainerName = resumesContainerName ?? throw new ArgumentNullException(nameof(resumesContainerName));
-        }
-
-        // Upload company problems to Blob Storage
-        public async Task UploadCompanyProblemsAsync(string companyName, List<string> problems)
-        {
-            var blobServiceClient = new BlobServiceClient(_connectionString);
-            var blobContainerClient = blobServiceClient.GetBlobContainerClient(_problemsContainerName);
-            var blobClient = blobContainerClient.GetBlobClient($"{companyName}_problems.txt");
-
-            var content = string.Join("\n", problems);
-            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(content)))
-            {
-                await blobClient.UploadAsync(stream, overwrite: true);
-            }
         }
 
         // Retrieve company problems from Blob Storage

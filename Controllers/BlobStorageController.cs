@@ -17,14 +17,6 @@ namespace CLIMB_BE.Controllers
             _blobStorageService = blobStorageService;
         }
 
-        // POST: api/BlobStorage/upload-problems
-        [HttpPost("upload-problems")]
-        public async Task<IActionResult> UploadCompanyProblems([FromQuery] string companyName, [FromBody] List<string> problems)
-        {
-            await _blobStorageService.UploadCompanyProblemsAsync(companyName, problems);
-            return Ok("Problems uploaded successfully.");
-        }
-
         // GET: api/BlobStorage/get-problems
         [HttpGet("get-problems")]
         public async Task<IActionResult> GetCompanyProblems([FromQuery] string companyName)

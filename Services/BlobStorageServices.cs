@@ -9,7 +9,7 @@ namespace CLIMB_BE.Services
     public class BlobStorageService
     {
         private readonly string _connectionString;
-        private readonly string _problemsContainerName;
+        private readonly string _problemsContainerName="problemcontainer";
         private readonly string _resumesContainerName;
 
         // Constructor that accepts the credentials
@@ -25,7 +25,7 @@ namespace CLIMB_BE.Services
         {
             var blobServiceClient = new BlobServiceClient(_connectionString);
             var blobContainerClient = blobServiceClient.GetBlobContainerClient(_problemsContainerName);
-            var blobClient = blobContainerClient.GetBlobClient($"{companyName}_problems.txt");
+            var blobClient = blobContainerClient.GetBlobClient($"{companyName}_problems.json");
 
             var response = await blobClient.DownloadAsync();
             using (var reader = new StreamReader(response.Value.Content))

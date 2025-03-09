@@ -1,4 +1,5 @@
 using CLIMB_BE.Services;
+using CLIMB_BE.Controllers;
 using DotNetEnv;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,7 +11,15 @@ Env.Load();
 // Register services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.MapType<IFormFile>(() => new Microsoft.OpenApi.Models.OpenApiSchema
+    {
+        Type = "string",
+        Format = "binary"
+    });
+});
+
 
 // Register BlobStorageService and pass environment variables
 builder.Services.AddSingleton<BlobStorageService>(provider =>

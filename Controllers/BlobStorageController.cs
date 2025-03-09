@@ -27,9 +27,15 @@ namespace CLIMB_BE.Controllers
 
         // POST: api/BlobStorage/upload-resume
         [HttpPost("upload-resume")]
-        public async Task<IActionResult> UploadResume([FromForm] IFormFile resumeFile)
+        [Consumes("multipart/form-data")]  // ✅ Important for Swagger
+        public async Task<IActionResult> UploadResume([FromForm] UploadResumeDto request)
         {
-            var resumeUrl = await _blobStorageService.UploadResumeAsync(resumeFile);
+            if (request.ResumeFile == null || request.ResumeFile.Length == 0)
+            {
+                return BadRequest("Invalid file.");
+            }
+
+            var resumeUrl = await _blobStorageService.UploadResumeAsync(request.ResumeFile);
             return Ok(new { ResumeUrl = resumeUrl });
         }
     }

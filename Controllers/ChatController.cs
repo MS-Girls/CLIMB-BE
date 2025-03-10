@@ -24,6 +24,7 @@ namespace CLIMB_BE.Controllers
         [Consumes("multipart/form-data")]
         public async Task<ActionResult<ChatResponse>> Post([FromForm] UploadResumeDto request)
         {
+            
             if (request.ResumeFile == null || request.ResumeFile.Length == 0)
             {
                 return BadRequest(new { message = "Invalid file upload" });

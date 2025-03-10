@@ -18,9 +18,19 @@ builder.Services.AddSwaggerGen(options =>
         Type = "string",
         Format = "binary"
     });
-     options.OperationFilter<FileUploadOperationFilter>();
+    options.OperationFilter<FileUploadOperationFilter>();
 });
 
+// Allow all origins for CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", policy =>
+    {
+        policy.AllowAnyOrigin()   // Allow all origins
+              .AllowAnyMethod()   // Allow any HTTP method (GET, POST, PUT, DELETE, etc.)
+              .AllowAnyHeader();  // Allow any headers
+    });
+});
 
 // Register BlobStorageService and pass environment variables
 builder.Services.AddSingleton<BlobStorageService>(provider =>
@@ -29,7 +39,6 @@ builder.Services.AddSingleton<BlobStorageService>(provider =>
     var problemsContainerName = Environment.GetEnvironmentVariable("AZURE_PROBLEMS_CONTAINER_NAME");
     var resumesContainerName = Environment.GetEnvironmentVariable("AZURE_RESUMES_CONTAINER_NAME");
 
-    // Ensure the environment variables are set, otherwise throw an exception
     if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(problemsContainerName) || string.IsNullOrEmpty(resumesContainerName))
     {
         throw new ArgumentNullException("One or more Azure Blob Storage environment variables are not set.");
@@ -38,13 +47,13 @@ builder.Services.AddSingleton<BlobStorageService>(provider =>
     return new BlobStorageService(connectionString, problemsContainerName, resumesContainerName);
 });
 
-// Register your other services
-builder.Services.AddSingleton<IChatServices, ChatServices>(); 
-builder.Services.AddSingleton<IOCRServices, OCRServices>(); 
+// Register other services
+builder.Services.AddSingleton<IChatServices, ChatServices>();
+builder.Services.AddSingleton<IOCRServices, OCRServices>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -52,6 +61,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Enable CORS
+app.UseCors("AllowAllOrigins");
+
 app.UseAuthorization();
 app.MapControllers();
 

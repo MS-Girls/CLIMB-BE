@@ -5,7 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure.AI.OpenAI;
+using Azure;
 using OpenAI.Chat;
+using Azure.Core;
+using Azure.AI.Inference;
 
 namespace CLIMB_BE.Services
 {
@@ -15,46 +18,43 @@ namespace CLIMB_BE.Services
         {
             DotNetEnv.Env.Load();
             DotNetEnv.Env.TraversePath().Load();
-          try 
+            try
             {
-                var deploymentName = System.Environment.GetEnvironmentVariable("DEPLOYMENT_NAME");
-        var endpointUrl = System.Environment.GetEnvironmentVariable("ENDPOINTURL");
-        var key = System.Environment.GetEnvironmentVariable("KEY");
-                
-                var client = new AzureOpenAIClient(new Uri(endpointUrl), new ApiKeyCredential(key));
-                var chatClient = client.GetChatClient(deploymentName);
-                var role = request.role ?? "You are an AI assistant that helps people find information.";
-
-               var messages = new List<ChatMessage>
+                var endpointUrl = System.Environment.GetEnvironmentVariable("ENDPOINTURL");
+                if (string.IsNullOrEmpty(endpointUrl))
                 {
-                    new SystemChatMessage(role)
+                    throw new InvalidOperationException("The environment variable 'ENDPOINTURL' is not set.");
+                }
+                var endpoint = new Uri(endpointUrl);
+                var key = System.Environment.GetEnvironmentVariable("KEY");
+                if (string.IsNullOrEmpty(key))
+                {
+                    throw new InvalidOperationException("The environment variable 'KEY' is not set.");
+                }
+                var credential = new Azure.AzureKeyCredential(key);
+                var model = "Phi-4-mini-instruct";
+
+                var client = new ChatCompletionsClient(
+                    endpoint,
+                    credential,
+                   new AzureAIInferenceClientOptions());
+                   var role = request.role ?? "You are an AI assistant that helps people find information.";
+                var requestOptions = new ChatCompletionsOptions()
+                {
+                    Messages =
+                            {
+                                new ChatRequestSystemMessage(role),
+                                new ChatRequestUserMessage(request.prompt),
+                            },
                 };
 
-                // Add chat history if available
-                if (request.history != null && request.history.Any())
-                {
-                    foreach (var chat in request.history)
-                    {
-                        messages.Add(new UserChatMessage(chat));
-                        messages.Add(new AssistantChatMessage(chat));
-                    }
-                }
+                Response<ChatCompletions> response = await client.CompleteAsync(requestOptions);
+       
 
-      
-                messages.Add(new UserChatMessage(request.prompt));
-                
-                var response = await chatClient.CompleteChatAsync(messages, new ChatCompletionOptions()
-                {
-                    Temperature = (float)0.7,
-                    FrequencyPenalty = (float)0,
-                    PresencePenalty = (float)0,
-                });
-               
-                string chatResponseText = response.Value.Content.Last().Text;
-                
+
                 return new ChatResponse
                 {
-                    Response = chatResponseText 
+                    Response = response.Value.Content
                 };
             }
             catch (Exception ex)

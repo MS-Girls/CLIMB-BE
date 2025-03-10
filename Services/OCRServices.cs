@@ -26,10 +26,9 @@ public class OCRServices : IOCRServices
             for (int i = 0; i < page.Lines.Count; i++)
             {
                 DocumentLine line = page.Lines[i];
-                content += line.Content + "\n";
+                content += line.Content.Trim() + " ";
             }
         }
-
-        return content;
+       return content.Trim();
     }
 }

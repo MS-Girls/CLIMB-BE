@@ -18,6 +18,7 @@ builder.Services.AddSwaggerGen(options =>
         Type = "string",
         Format = "binary"
     });
+     options.OperationFilter<FileUploadOperationFilter>();
 });
 
 
@@ -39,6 +40,7 @@ builder.Services.AddSingleton<BlobStorageService>(provider =>
 
 // Register your other services
 builder.Services.AddSingleton<IChatServices, ChatServices>(); 
+builder.Services.AddSingleton<IOCRServices, OCRServices>(); 
 
 var app = builder.Build();
 

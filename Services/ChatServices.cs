@@ -18,39 +18,60 @@ namespace CLIMB_BE.Services
         {
             DotNetEnv.Env.Load();
             DotNetEnv.Env.TraversePath().Load();
+
             try
             {
-                var endpointUrl = System.Environment.GetEnvironmentVariable("ENDPOINTURL");
+                var endpointUrl = Environment.GetEnvironmentVariable("ENDPOINTURL");
                 if (string.IsNullOrEmpty(endpointUrl))
                 {
                     throw new InvalidOperationException("The environment variable 'ENDPOINTURL' is not set.");
                 }
+
                 var endpoint = new Uri(endpointUrl);
-                var key = System.Environment.GetEnvironmentVariable("KEY");
+                var key = Environment.GetEnvironmentVariable("KEY");
                 if (string.IsNullOrEmpty(key))
                 {
                     throw new InvalidOperationException("The environment variable 'KEY' is not set.");
                 }
+
                 var credential = new Azure.AzureKeyCredential(key);
                 var model = "Phi-4-mini-instruct";
 
-                var client = new ChatCompletionsClient(
-                    endpoint,
-                    credential,
-                   new AzureAIInferenceClientOptions());
-                   var role = request.role ?? "You are an AI assistant that helps people find information.";
+                var client = new ChatCompletionsClient(endpoint, credential, new AzureAIInferenceClientOptions());
+
+                var role = request.role ?? "You are an AI assistant that helps people find information.";
+
+                // Convert history to chat format
+                var messages = new List<ChatRequestMessage>
+        {
+            new ChatRequestSystemMessage(role) // Set AI's role
+        };
+
+                // Add history messages if available
+                if (request.history != null)
+                {
+                    foreach (var message in request.history)
+                    {
+                        if (message.sender == "user")
+                        {
+                            messages.Add(new ChatRequestUserMessage(message.message));
+                        }
+                        else if (message.sender == "assistant")
+                        {
+                            messages.Add(new ChatRequestAssistantMessage(message.message));
+                        }
+                    }
+                }
+
+                // Add the current user query
+                messages.Add(new ChatRequestUserMessage(request.prompt));
+
                 var requestOptions = new ChatCompletionsOptions()
                 {
-                    Messages =
-                            {
-                                new ChatRequestSystemMessage(role),
-                                new ChatRequestUserMessage(request.prompt),
-                            },
+                    Messages = messages
                 };
 
                 Response<ChatCompletions> response = await client.CompleteAsync(requestOptions);
-       
-
 
                 return new ChatResponse
                 {
@@ -65,5 +86,7 @@ namespace CLIMB_BE.Services
                 };
             }
         }
+
+
     }
 }

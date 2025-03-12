@@ -61,5 +61,24 @@ namespace CLIMB_BE.Controllers
             }
         }
 
+        [HttpPost("chat")]
+        public async Task<ActionResult<ChatResponse>> PostChat([FromBody] ChatRequest request)
+        {
+            if (request == null || string.IsNullOrWhiteSpace(request.prompt))
+            {
+                return BadRequest(new { message = "Invalid chat request" });
+            }
+
+            try
+            {
+                ChatResponse chatResponse = await _chatServices.GetResponse(request);
+                return Ok(chatResponse);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"An error occurred: {ex.Message}" });
+            }
+        }
+
     }
 }

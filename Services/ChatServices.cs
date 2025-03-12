@@ -46,6 +46,7 @@ namespace CLIMB_BE.Services
                                 new ChatRequestSystemMessage(role),
                                 new ChatRequestUserMessage(request.prompt),
                             },
+                            Model=model
                 };
 
                 Response<ChatCompletions> response = await client.CompleteAsync(requestOptions);

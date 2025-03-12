@@ -71,6 +71,7 @@ namespace CLIMB_BE.Controllers
 
             try
             {
+                Console.WriteLine("Request: " + request.prompt + " " + request.history);
                 ChatResponse chatResponse = await _chatServices.GetResponse(request);
                 return Ok(chatResponse);
             }

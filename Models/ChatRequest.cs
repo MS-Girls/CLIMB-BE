@@ -4,13 +4,13 @@ namespace CLIMB_BE.Models
     {
         public required string prompt { get; set; }
         public  string? role { get; set; }
-        public List<ChatMessage> history { get; set; }
+        public List<ChatMessage>? history { get; set; }
 
     }
 }
 
 public class ChatMessage
 {
-    public string sender { get; set; } // "user" or "assistant"
-    public string message { get; set; }
+    public string? sender { get; set; } 
+    public string? message { get; set; }
 }

@@ -47,6 +47,7 @@ builder.Services.AddSingleton<BlobStorageService>(provider =>
     return new BlobStorageService(connectionString, problemsContainerName, resumesContainerName);
 });
 
+
 // Register other services
 builder.Services.AddSingleton<IChatServices, ChatServices>();
 builder.Services.AddSingleton<IOCRServices, OCRServices>();

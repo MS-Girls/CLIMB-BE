@@ -9,8 +9,8 @@ on:
       - master
 
 jobs:
-  build:
-    name: Build CLIMB Backend
+  build_and_push:
+    name: Build and Push Docker Image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -27,13 +27,6 @@ jobs:
       - name: Build Project
         run: dotnet build --configuration Release --no-restore
 
-  docker:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-      
       - name: Get Current Timestamp
         id: date
         run: echo "timestamp=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV

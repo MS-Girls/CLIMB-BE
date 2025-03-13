@@ -10,6 +10,7 @@ on:
 
 jobs:
   build:
+    name: Build CLIMB Backend
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -45,7 +46,7 @@ jobs:
 
       - name: Build and Tag Docker Image
         run: |
-          docker buildx build -t ${{ secrets.DOCKER_USERNAME }}/climbbe:${{ env.timestamp }} .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/climbbe:${{ env.timestamp }} .
 
       - name: Push Docker Image to Docker Hub
         run: |

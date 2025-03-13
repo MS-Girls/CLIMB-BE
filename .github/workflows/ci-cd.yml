@@ -39,8 +39,8 @@ jobs:
 
       - name: Build and Tag Docker Image
         run: |
-          docker build -f ./Dockerfile -t  ${{ secrets.DOCKER_USERNAME }}/climbbe:latest .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/climbbe:${{ env.timestamp }} .
 
       - name: Push Docker Image to Docker Hub
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/climbbe:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/climbbe:${{ env.timestamp }}

@@ -81,5 +81,35 @@ namespace CLIMB_BE.Controllers
             }
         }
 
+        [HttpPost("resumeextraction")]
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<string>> PostResumeExtraction([FromForm] UploadResumeDto request)
+        {
+            if (request.ResumeFile == null || request.ResumeFile.Length == 0)
+            {
+                return BadRequest(new { message = "Invalid file upload" });
+            }
+
+            try
+            {
+                
+                string resumeUrl = await _blobStorageService.UploadResumeAsync(request.ResumeFile);
+
+                // Step 2: Extract Text Using OCR
+                string resumeText = await _ocrServices.ReadDocument(resumeUrl);
+
+                if (string.IsNullOrWhiteSpace(resumeText))
+                {
+                    return BadRequest(new { message = "Failed to extract text from resume." });
+                }
+
+                return Ok(resumeText);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"An error occurred: {ex.Message}" });
+            }
+        }
+
     }
 }

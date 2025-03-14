@@ -17,6 +17,11 @@ WORKDIR /app
 # Copy built application from the build stage
 COPY --from=build /publish .
 
+
+# Set the correct URL for the app to listen on
+ENV ASPNETCORE_URLS=http://+:80
+
+
 # Expose the port the application runs on
 EXPOSE 80
 

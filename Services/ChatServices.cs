@@ -68,7 +68,8 @@ namespace CLIMB_BE.Services
 
                 var requestOptions = new ChatCompletionsOptions()
                 {
-                    Messages = messages
+                    Messages = messages,
+                    Model = model
                 };
 
                 Response<ChatCompletions> response = await client.CompleteAsync(requestOptions);
